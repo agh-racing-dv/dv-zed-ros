@@ -109,8 +109,6 @@ void ZEDWrapperNodelet::onInit()
     std::string stereoTopicRoot = "stereo";
     std::string img_topic = "/image_rect_color";
     std::string img_raw_topic = "/image_raw_color";
-    std::string img_gray_topic = "/image_rect_gray";
-    std::string img_raw_gray_topic_ = "/image_raw_gray";
     std::string raw_suffix = "_raw";
     std::string left_topic = leftTopicRoot + img_topic;
     std::string left_raw_topic = leftTopicRoot + raw_suffix + img_raw_topic;
@@ -120,12 +118,6 @@ void ZEDWrapperNodelet::onInit()
     std::string rgb_raw_topic = rgbTopicRoot + raw_suffix + img_raw_topic;
     std::string stereo_topic = stereoTopicRoot + img_topic;
     std::string stereo_raw_topic = stereoTopicRoot + raw_suffix + img_raw_topic;
-    std::string left_gray_topic = leftTopicRoot + img_gray_topic;
-    std::string left_raw_gray_topic = leftTopicRoot + raw_suffix + img_raw_gray_topic_;
-    std::string right_gray_topic = rightTopicRoot + img_gray_topic;
-    std::string right_raw_gray_topic = rightTopicRoot + raw_suffix + img_raw_gray_topic_;
-    std::string rgb_gray_topic = rgbTopicRoot + img_gray_topic;
-    std::string rgb_raw_gray_topic = rgbTopicRoot + raw_suffix + img_raw_gray_topic_;
 
     // Set the disparity topic name
     std::string disparityTopic = "disparity/disparity_image";
@@ -417,25 +409,6 @@ void ZEDWrapperNodelet::onInit()
     mPubRawRight = it_zed.advertiseCamera(right_raw_topic, 1); // right raw
     NODELET_INFO_STREAM("Advertised on topic " << mPubRawRight.getTopic());
     NODELET_INFO_STREAM("Advertised on topic " << mPubRawRight.getInfoTopic());
-
-    mPubRgbGray = it_zed.advertiseCamera(rgb_gray_topic, 1); // rgb
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRgbGray.getTopic());
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRgbGray.getInfoTopic());
-    mPubRawRgbGray = it_zed.advertiseCamera(rgb_raw_gray_topic, 1); // rgb raw
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRawRgbGray.getTopic());
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRawRgbGray.getInfoTopic());
-    mPubLeftGray = it_zed.advertiseCamera(left_gray_topic, 1); // left
-    NODELET_INFO_STREAM("Advertised on topic " << mPubLeftGray.getTopic());
-    NODELET_INFO_STREAM("Advertised on topic " << mPubLeftGray.getInfoTopic());
-    mPubRawLeftGray = it_zed.advertiseCamera(left_raw_gray_topic, 1); // left raw
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRawLeftGray.getTopic());
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRawLeftGray.getInfoTopic());
-    mPubRightGray = it_zed.advertiseCamera(right_gray_topic, 1); // right
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRightGray.getTopic());
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRightGray.getInfoTopic());
-    mPubRawRightGray = it_zed.advertiseCamera(right_raw_gray_topic, 1); // right raw
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRawRightGray.getTopic());
-    NODELET_INFO_STREAM("Advertised on topic " << mPubRawRightGray.getInfoTopic());
 
     mPubDepth = it_zed.advertiseCamera(depth_topic_root, 1); // depth
     NODELET_INFO_STREAM("Advertised on topic " << mPubDepth.getTopic());
@@ -892,8 +865,6 @@ void ZEDWrapperNodelet::readParameters()
     NODELET_INFO_STREAM(" * base_frame\t\t\t-> " << mBaseFrameId);
     NODELET_INFO_STREAM(" * camera_frame\t\t\t-> " << mCameraFrameId);
     NODELET_INFO_STREAM(" * imu_link\t\t\t-> " << mImuFrameId);
-    NODELET_INFO_STREAM(" * left_camera_frame\t\t-> " << mLeftCamFrameId);
-    NODELET_INFO_STREAM(" * left_camera_optical_frame\t-> " << mLeftCamFrameId);
     NODELET_INFO_STREAM(" * right_camera_frame\t\t-> " << mRightCamFrameId);
     NODELET_INFO_STREAM(" * right_camera_optical_frame\t-> " << mRightCamFrameId);
     NODELET_INFO_STREAM(" * depth_frame\t\t\t-> " << mDepthFrameId);
@@ -2454,26 +2425,18 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
     uint32_t leftRawSubnumber = mPubRawLeft.getNumSubscribers();
     uint32_t rightSubnumber = mPubRight.getNumSubscribers();
     uint32_t rightRawSubnumber = mPubRawRight.getNumSubscribers();
-    uint32_t rgbGraySubnumber = mPubRgbGray.getNumSubscribers();
-    uint32_t rgbGrayRawSubnumber = mPubRawRgbGray.getNumSubscribers();
-    uint32_t leftGraySubnumber = mPubLeftGray.getNumSubscribers();
-    uint32_t leftGrayRawSubnumber = mPubRawLeftGray.getNumSubscribers();
-    uint32_t rightGraySubnumber = mPubRightGray.getNumSubscribers();
-    uint32_t rightGrayRawSubnumber = mPubRawRightGray.getNumSubscribers();
     uint32_t depthSubnumber = mPubDepth.getNumSubscribers();
     uint32_t disparitySubnumber = mPubDisparity.getNumSubscribers();
     uint32_t confMapSubnumber = mPubConfMap.getNumSubscribers();
     uint32_t stereoSubNumber = mPubStereo.getNumSubscribers();
     uint32_t stereoRawSubNumber = mPubRawStereo.getNumSubscribers();
 
-    uint32_t tot_sub = rgbSubnumber + rgbRawSubnumber + leftSubnumber + leftRawSubnumber + rightSubnumber + rightRawSubnumber + rgbGraySubnumber + rgbGrayRawSubnumber + leftGraySubnumber + leftGrayRawSubnumber + rightGraySubnumber + rightGrayRawSubnumber + depthSubnumber + disparitySubnumber + confMapSubnumber + stereoSubNumber + stereoRawSubNumber;
+    uint32_t tot_sub = rgbSubnumber + rgbRawSubnumber + leftSubnumber + leftRawSubnumber + rightSubnumber + rightRawSubnumber + depthSubnumber + disparitySubnumber + confMapSubnumber + stereoSubNumber + stereoRawSubNumber;
 
     bool retrieved = false;
 
     sl::Mat mat_left, mat_left_raw;
     sl::Mat mat_right, mat_right_raw;
-    sl::Mat mat_left_gray, mat_left_raw_gray;
-    sl::Mat mat_right_gray, mat_right_raw_gray;
     sl::Mat mat_depth, mat_disp, mat_conf;
 
     sl::Timestamp ts_rgb = 0; // used to check RGB/Depth sync
@@ -2503,26 +2466,6 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
         mZed.retrieveImage(mat_right_raw, sl::VIEW::RIGHT_UNRECTIFIED, sl::MEM::CPU, mMatResolVideo);
         retrieved = true;
         grab_ts = mat_right_raw.timestamp;
-    }
-    if (rgbGraySubnumber + leftGraySubnumber > 0) {
-        mZed.retrieveImage(mat_left_gray, sl::VIEW::LEFT_GRAY, sl::MEM::CPU, mMatResolVideo);
-        retrieved = true;
-        grab_ts = mat_left_gray.timestamp;
-    }
-    if (rgbGrayRawSubnumber + leftGrayRawSubnumber > 0) {
-        mZed.retrieveImage(mat_left_raw_gray, sl::VIEW::LEFT_UNRECTIFIED_GRAY, sl::MEM::CPU, mMatResolVideo);
-        retrieved = true;
-        grab_ts = mat_left_raw_gray.timestamp;
-    }
-    if (rightGraySubnumber > 0) {
-        mZed.retrieveImage(mat_right_gray, sl::VIEW::RIGHT_GRAY, sl::MEM::CPU, mMatResolVideo);
-        retrieved = true;
-        grab_ts = mat_right_gray.timestamp;
-    }
-    if (rightGrayRawSubnumber > 0) {
-        mZed.retrieveImage(mat_right_raw_gray, sl::VIEW::RIGHT_UNRECTIFIED_GRAY, sl::MEM::CPU, mMatResolVideo);
-        retrieved = true;
-        grab_ts = mat_right_raw_gray.timestamp;
     }
     if (depthSubnumber > 0) {
 #if (ZED_SDK_MAJOR_VERSION == 3 && ZED_SDK_MINOR_VERSION < 4)
@@ -2618,16 +2561,6 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
         publishImage(rgbImgMsg, mat_left, mPubRgb, mRgbCamInfoMsg, mDepthOptFrameId, stamp);
     }
 
-    // Publish the left = rgb GRAY image if someone has subscribed to
-    if (leftGraySubnumber > 0) {
-        sensor_msgs::ImagePtr leftGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(leftGrayImgMsg, mat_left_gray, mPubLeftGray, mLeftCamInfoMsg, mLeftCamFrameId, stamp);
-    }
-    if (rgbGraySubnumber > 0) {
-        sensor_msgs::ImagePtr rgbGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rgbGrayImgMsg, mat_left_gray, mPubRgbGray, mRgbCamInfoMsg, mDepthOptFrameId, stamp);
-    }
-
     // Publish the left_raw = rgb_raw image if someone has subscribed to
     if (leftRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawLeftImgMsg = boost::make_shared<sensor_msgs::Image>();
@@ -2638,40 +2571,16 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
         publishImage(rawRgbImgMsg, mat_left_raw, mPubRawRgb, mRgbCamInfoRawMsg, mDepthOptFrameId, stamp);
     }
 
-    // Publish the left_raw == rgb_raw GRAY image if someone has subscribed to
-    if (leftGrayRawSubnumber > 0) {
-        sensor_msgs::ImagePtr rawLeftGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-
-        publishImage(rawLeftGrayImgMsg, mat_left_raw_gray, mPubRawLeftGray, mLeftCamInfoRawMsg, mLeftCamFrameId, stamp);
-    }
-    if (rgbGrayRawSubnumber > 0) {
-        sensor_msgs::ImagePtr rawRgbGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rawRgbGrayImgMsg, mat_left_raw_gray, mPubRawRgbGray, mRgbCamInfoRawMsg, mDepthOptFrameId, stamp);
-    }
-
     // Publish the right image if someone has subscribed to
     if (rightSubnumber > 0) {
         sensor_msgs::ImagePtr rightImgMsg = boost::make_shared<sensor_msgs::Image>();
         publishImage(rightImgMsg, mat_right, mPubRight, mRightCamInfoMsg, mRightCamFrameId, stamp);
     }
 
-    // Publish the right image GRAY if someone has subscribed to
-    if (rightGraySubnumber > 0) {
-        sensor_msgs::ImagePtr rightGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rightGrayImgMsg, mat_right_gray, mPubRightGray, mRightCamInfoMsg, mRightCamFrameId, stamp);
-    }
-
     // Publish the right raw image if someone has subscribed to
     if (rightRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawRightImgMsg = boost::make_shared<sensor_msgs::Image>();
         publishImage(rawRightImgMsg, mat_right_raw, mPubRawRight, mRightCamInfoRawMsg, mRightCamFrameId, stamp);
-    }
-
-    // Publish the right raw image GRAY if someone has subscribed to
-    if (rightGrayRawSubnumber > 0) {
-        sensor_msgs::ImagePtr rawRightGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rawRightGrayImgMsg, mat_right_raw_gray, mPubRawRightGray, mRightCamInfoRawMsg, mRightCamFrameId,
-            stamp);
     }
 
     // Stereo couple side-by-side
@@ -3229,12 +3138,6 @@ void ZEDWrapperNodelet::device_poll_thread_func()
         uint32_t leftRawSubnumber = mPubRawLeft.getNumSubscribers();
         uint32_t rightSubnumber = mPubRight.getNumSubscribers();
         uint32_t rightRawSubnumber = mPubRawRight.getNumSubscribers();
-        uint32_t rgbGraySubnumber = mPubRgbGray.getNumSubscribers();
-        uint32_t rgbGrayRawSubnumber = mPubRawRgbGray.getNumSubscribers();
-        uint32_t leftGraySubnumber = mPubLeftGray.getNumSubscribers();
-        uint32_t leftGrayRawSubnumber = mPubRawLeftGray.getNumSubscribers();
-        uint32_t rightGraySubnumber = mPubRightGray.getNumSubscribers();
-        uint32_t rightGrayRawSubnumber = mPubRawRightGray.getNumSubscribers();
         uint32_t depthSubnumber = mPubDepth.getNumSubscribers();
         uint32_t disparitySubnumber = mPubDisparity.getNumSubscribers();
         uint32_t cloudSubnumber = mPubCloud.getNumSubscribers();
@@ -3252,7 +3155,7 @@ void ZEDWrapperNodelet::device_poll_thread_func()
             objDetSubnumber = mPubObjDet.getNumSubscribers();
         }
 
-        mGrabActive = mRecording || mStreaming || mMappingEnabled || mObjDetEnabled || mPosTrackingEnabled || mPosTrackingActivated || ((rgbSubnumber + rgbRawSubnumber + leftSubnumber + leftRawSubnumber + rightSubnumber + rightRawSubnumber + rgbGraySubnumber + rgbGrayRawSubnumber + leftGraySubnumber + leftGrayRawSubnumber + rightGraySubnumber + rightGrayRawSubnumber + depthSubnumber + disparitySubnumber + cloudSubnumber + poseSubnumber + poseCovSubnumber + odomSubnumber + confMapSubnumber /*+ imuSubnumber + imuRawsubnumber*/ + pathSubNumber + stereoSubNumber + stereoRawSubNumber + objDetSubnumber) > 0);
+        mGrabActive = mRecording || mStreaming || mMappingEnabled || mObjDetEnabled || mPosTrackingEnabled || mPosTrackingActivated || ((rgbSubnumber + rgbRawSubnumber + leftSubnumber + leftRawSubnumber + rightSubnumber + rightRawSubnumber + depthSubnumber + disparitySubnumber + cloudSubnumber + poseSubnumber + poseCovSubnumber + odomSubnumber + confMapSubnumber /*+ imuSubnumber + imuRawsubnumber*/ + pathSubNumber + stereoSubNumber + stereoRawSubNumber + objDetSubnumber) > 0);
 
         // Run the loop only if there is some subscribers or SVO is active
         if (mGrabActive) {

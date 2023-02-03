@@ -427,13 +427,6 @@ private:
     image_transport::Publisher mPubStereo;
     image_transport::Publisher mPubRawStereo;
 
-    image_transport::CameraPublisher mPubRgbGray;
-    image_transport::CameraPublisher mPubRawRgbGray;
-    image_transport::CameraPublisher mPubLeftGray;
-    image_transport::CameraPublisher mPubRawLeftGray;
-    image_transport::CameraPublisher mPubRightGray;
-    image_transport::CameraPublisher mPubRawRightGray;
-
     ros::Publisher mPubConfMap; //
     ros::Publisher mPubDisparity; //
     ros::Publisher mPubCloud;
