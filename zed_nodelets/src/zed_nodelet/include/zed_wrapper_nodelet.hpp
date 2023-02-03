@@ -520,9 +520,7 @@ private:
     std::string mCameraFrameId;
 
     std::string mRightCamFrameId;
-    std::string mRightCamOptFrameId;
     std::string mLeftCamFrameId;
-    std::string mLeftCamOptFrameId;
     std::string mImuFrameId;
 
     std::string mBaroFrameId;

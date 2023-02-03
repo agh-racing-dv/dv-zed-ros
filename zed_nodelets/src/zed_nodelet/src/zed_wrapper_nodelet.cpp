@@ -867,9 +867,7 @@ void ZEDWrapperNodelet::readParameters()
     mCameraFrameId = mCameraName + "_camera_center";
     mImuFrameId = mCameraName + "_imu_link";
     mLeftCamFrameId = mCameraName + "_left_camera_frame";
-    mLeftCamOptFrameId = mCameraName + "_left_camera_optical_frame";
     mRightCamFrameId = mCameraName + "_right_camera_frame";
-    mRightCamOptFrameId = mCameraName + "_right_camera_optical_frame";
 
     mBaroFrameId = mCameraName + "_baro_link";
     mMagFrameId = mCameraName + "_mag_link";
@@ -877,7 +875,7 @@ void ZEDWrapperNodelet::readParameters()
     mTempRightFrameId = mCameraName + "_temp_right_link";
 
     mDepthFrameId = mLeftCamFrameId;
-    mDepthOptFrameId = mLeftCamOptFrameId;
+    mDepthOptFrameId = mLeftCamFrameId;
 
     // Note: Depth image frame id must match color image frame id
     mCloudFrameId = mDepthOptFrameId;
@@ -895,9 +893,9 @@ void ZEDWrapperNodelet::readParameters()
     NODELET_INFO_STREAM(" * camera_frame\t\t\t-> " << mCameraFrameId);
     NODELET_INFO_STREAM(" * imu_link\t\t\t-> " << mImuFrameId);
     NODELET_INFO_STREAM(" * left_camera_frame\t\t-> " << mLeftCamFrameId);
-    NODELET_INFO_STREAM(" * left_camera_optical_frame\t-> " << mLeftCamOptFrameId);
+    NODELET_INFO_STREAM(" * left_camera_optical_frame\t-> " << mLeftCamFrameId);
     NODELET_INFO_STREAM(" * right_camera_frame\t\t-> " << mRightCamFrameId);
-    NODELET_INFO_STREAM(" * right_camera_optical_frame\t-> " << mRightCamOptFrameId);
+    NODELET_INFO_STREAM(" * right_camera_optical_frame\t-> " << mRightCamFrameId);
     NODELET_INFO_STREAM(" * depth_frame\t\t\t-> " << mDepthFrameId);
     NODELET_INFO_STREAM(" * depth_optical_frame\t\t-> " << mDepthOptFrameId);
     NODELET_INFO_STREAM(" * disparity_frame\t\t-> " << mDisparityFrameId);
@@ -2613,7 +2611,7 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
     // Publish the left = rgb image if someone has subscribed to
     if (leftSubnumber > 0) {
         sensor_msgs::ImagePtr leftImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(leftImgMsg, mat_left, mPubLeft, mLeftCamInfoMsg, mLeftCamOptFrameId, stamp);
+        publishImage(leftImgMsg, mat_left, mPubLeft, mLeftCamInfoMsg, mLeftCamFrameId, stamp);
     }
     if (rgbSubnumber > 0) {
         sensor_msgs::ImagePtr rgbImgMsg = boost::make_shared<sensor_msgs::Image>();
@@ -2623,7 +2621,7 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
     // Publish the left = rgb GRAY image if someone has subscribed to
     if (leftGraySubnumber > 0) {
         sensor_msgs::ImagePtr leftGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(leftGrayImgMsg, mat_left_gray, mPubLeftGray, mLeftCamInfoMsg, mLeftCamOptFrameId, stamp);
+        publishImage(leftGrayImgMsg, mat_left_gray, mPubLeftGray, mLeftCamInfoMsg, mLeftCamFrameId, stamp);
     }
     if (rgbGraySubnumber > 0) {
         sensor_msgs::ImagePtr rgbGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
@@ -2633,7 +2631,7 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
     // Publish the left_raw = rgb_raw image if someone has subscribed to
     if (leftRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawLeftImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rawLeftImgMsg, mat_left_raw, mPubRawLeft, mLeftCamInfoRawMsg, mLeftCamOptFrameId, stamp);
+        publishImage(rawLeftImgMsg, mat_left_raw, mPubRawLeft, mLeftCamInfoRawMsg, mLeftCamFrameId, stamp);
     }
     if (rgbRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawRgbImgMsg = boost::make_shared<sensor_msgs::Image>();
@@ -2644,7 +2642,7 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
     if (leftGrayRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawLeftGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
 
-        publishImage(rawLeftGrayImgMsg, mat_left_raw_gray, mPubRawLeftGray, mLeftCamInfoRawMsg, mLeftCamOptFrameId, stamp);
+        publishImage(rawLeftGrayImgMsg, mat_left_raw_gray, mPubRawLeftGray, mLeftCamInfoRawMsg, mLeftCamFrameId, stamp);
     }
     if (rgbGrayRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawRgbGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
@@ -2654,25 +2652,25 @@ void ZEDWrapperNodelet::callback_pubVideoDepth(const ros::TimerEvent& e)
     // Publish the right image if someone has subscribed to
     if (rightSubnumber > 0) {
         sensor_msgs::ImagePtr rightImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rightImgMsg, mat_right, mPubRight, mRightCamInfoMsg, mRightCamOptFrameId, stamp);
+        publishImage(rightImgMsg, mat_right, mPubRight, mRightCamInfoMsg, mRightCamFrameId, stamp);
     }
 
     // Publish the right image GRAY if someone has subscribed to
     if (rightGraySubnumber > 0) {
         sensor_msgs::ImagePtr rightGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rightGrayImgMsg, mat_right_gray, mPubRightGray, mRightCamInfoMsg, mRightCamOptFrameId, stamp);
+        publishImage(rightGrayImgMsg, mat_right_gray, mPubRightGray, mRightCamInfoMsg, mRightCamFrameId, stamp);
     }
 
     // Publish the right raw image if someone has subscribed to
     if (rightRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawRightImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rawRightImgMsg, mat_right_raw, mPubRawRight, mRightCamInfoRawMsg, mRightCamOptFrameId, stamp);
+        publishImage(rawRightImgMsg, mat_right_raw, mPubRawRight, mRightCamInfoRawMsg, mRightCamFrameId, stamp);
     }
 
     // Publish the right raw image GRAY if someone has subscribed to
     if (rightGrayRawSubnumber > 0) {
         sensor_msgs::ImagePtr rawRightGrayImgMsg = boost::make_shared<sensor_msgs::Image>();
-        publishImage(rawRightGrayImgMsg, mat_right_raw_gray, mPubRawRightGray, mRightCamInfoRawMsg, mRightCamOptFrameId,
+        publishImage(rawRightGrayImgMsg, mat_right_raw_gray, mPubRawRightGray, mRightCamInfoRawMsg, mRightCamFrameId,
             stamp);
     }
 
@@ -3210,9 +3208,9 @@ void ZEDWrapperNodelet::device_poll_thread_func()
     NODELET_DEBUG_STREAM("Depth Mat size : " << mMatResolDepth.width << "x" << mMatResolDepth.height);
 
     // Create and fill the camera information messages
-    fillCamInfo(mZed, mLeftCamInfoMsg, mRightCamInfoMsg, mLeftCamOptFrameId, mRightCamOptFrameId);
-    fillCamInfo(mZed, mLeftCamInfoRawMsg, mRightCamInfoRawMsg, mLeftCamOptFrameId, mRightCamOptFrameId, true);
-    fillCamDepthInfo(mZed, mDepthCamInfoMsg, mLeftCamOptFrameId);
+    fillCamInfo(mZed, mLeftCamInfoMsg, mRightCamInfoMsg, mLeftCamFrameId, mRightCamFrameId);
+    fillCamInfo(mZed, mLeftCamInfoRawMsg, mRightCamInfoRawMsg, mLeftCamFrameId, mRightCamFrameId, true);
+    fillCamDepthInfo(mZed, mDepthCamInfoMsg, mLeftCamFrameId);
 
     // the reference camera is the Left one (next to the ZED logo)
 
@@ -4436,9 +4434,9 @@ void ZEDWrapperNodelet::clickedPtCallback(geometry_msgs::PointStampedConstPtr ms
     double camX, camY, camZ;
     try {
         // Save the transformation
-        geometry_msgs::TransformStamped m2o = mTfBuffer->lookupTransform(mLeftCamOptFrameId, msg->header.frame_id, ros::Time(0), ros::Duration(0.1));
+        geometry_msgs::TransformStamped m2o = mTfBuffer->lookupTransform(mLeftCamFrameId, msg->header.frame_id, ros::Time(0), ros::Duration(0.1));
 
-        NODELET_INFO("'%s' -> '%s': {%.3f,%.3f,%.3f} {%.3f,%.3f,%.3f,%.3f}", msg->header.frame_id.c_str(), mLeftCamOptFrameId.c_str(),
+        NODELET_INFO("'%s' -> '%s': {%.3f,%.3f,%.3f} {%.3f,%.3f,%.3f,%.3f}", msg->header.frame_id.c_str(), mLeftCamFrameId.c_str(),
             m2o.transform.translation.x, m2o.transform.translation.y, m2o.transform.translation.z,
             m2o.transform.rotation.x, m2o.transform.rotation.y, m2o.transform.rotation.z, m2o.transform.rotation.w);
 
@@ -4454,7 +4452,7 @@ void ZEDWrapperNodelet::clickedPtCallback(geometry_msgs::PointStampedConstPtr ms
         NODELET_INFO("Point in camera coordinates [Z FW, X RG, Y DW]: {%.3f,%.3f,%.3f}", camX, camY, camZ);
     } catch (tf2::TransformException& ex) {
         NODELET_DEBUG_THROTTLE(1.0, "Transform error: %s", ex.what());
-        NODELET_WARN_THROTTLE(1.0, "The tf from '%s' to '%s' is not available.", msg->header.frame_id.c_str(), mLeftCamOptFrameId.c_str());
+        NODELET_WARN_THROTTLE(1.0, "The tf from '%s' to '%s' is not available.", msg->header.frame_id.c_str(), mLeftCamFrameId.c_str());
 
         return;
     }
